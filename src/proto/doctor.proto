@@ -3,48 +3,64 @@ syntax = "proto3";
 package doctor;
 
 service DoctorService {
-  rpc Create(CreateDoctorRequest) returns (DoctorResponse);
-  rpc FindAll(Empty) returns (DoctorList);
-  rpc FindOne(FindOneRequest) returns (DoctorResponse);
-  rpc Update(UpdateDoctorRequest) returns (DoctorResponse);
-  rpc Remove(RemoveDoctorRequest) returns (RemoveDoctorResponse);
+  rpc Create (CreateDoctorRequest) returns (DoctorResponse);
+  rpc SignIn (LoginDoctorRequest) returns (DoctorResponse);
+  rpc SignOut (Empty) returns (SignOutResponse);
+  rpc FindAll (Empty) returns (DoctorList);
+  rpc FindOne (FindOneRequest) returns (DoctorResponse);
+  rpc Update (UpdateDoctorRequest) returns (DoctorResponse);
+  rpc Remove (RemoveRequest) returns (RemoveResponse);
 }
 
-// Requests
-message CreateDoctorRequest {
-  string name = 1;
-  string email = 2;
-  string password = 3;
-}
+message Empty {}
 
-message UpdateDoctorRequest {
-  int32 id = 1;
-  string name = 2;
-  string email = 3;
-  string password = 4;
-}
-
-message FindOneRequest {
-  int32 id = 1;
-}
-
-message RemoveDoctorRequest {
-  int32 id = 1;
-}
-
-// Responses
 message DoctorResponse {
   int32 id = 1;
   string name = 2;
   string email = 3;
+  string phoneNumber = 4;
+  bool isActive = 5;
+  bool isCreator = 6;
 }
 
 message DoctorList {
   repeated DoctorResponse doctors = 1;
 }
 
-message RemoveDoctorResponse {
+message CreateDoctorRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string phoneNumber = 4;
+  bool isCreator = 5;
+}
+
+message LoginDoctorRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignOutResponse {
   string message = 1;
 }
 
-message Empty {}
+message FindOneRequest {
+  int32 id = 1;
+}
+
+message UpdateDoctorRequest {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  string phoneNumber = 4;
+  bool isActive = 5;
+  bool isCreator = 6;
+}
+
+message RemoveRequest {
+  int32 id = 1;
+}
+
+message RemoveResponse {
+  string message = 1;
+}

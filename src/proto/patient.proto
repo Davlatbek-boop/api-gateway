@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package patient;
+
+service PatientService {
+  rpc Create (CreatePatientRequest) returns (PatientResponse);
+  rpc Get (GetPatientRequest) returns (PatientResponse);
+  rpc GetAll (Empty) returns (PatientList);
+  rpc Update (UpdatePatientRequest) returns (PatientResponse);
+  rpc Delete (DeletePatientRequest) returns (DeleteResponse);
+}
+
+message Empty {}
+
+message CreatePatientRequest {
+  string name = 1;
+  string dob = 2;
+  int32 doctorId = 3;
+}
+
+message GetPatientRequest {
+  int32 id = 1;
+}
+
+message UpdatePatientRequest {
+  int32 id = 1;
+  string name = 2;
+  string dob = 3;
+  int32 doctorId = 4;
+}
+
+message DeletePatientRequest {
+  int32 id = 1;
+}
+
+message PatientResponse {
+  int32 id = 1;
+  string name = 2;
+  string dob = 3;
+  int32 doctorId = 4;
+}
+
+message PatientList {
+  repeated PatientResponse patients = 1;
+}
+
+message DeleteResponse {
+  string message = 1;
+}
+
+
+service VisitService {
+  rpc Create (CreateVisitRequest) returns (VisitResponse);
+  rpc GetAll (Empty) returns (VisitsListResponse);
+  rpc GetOne (VisitById) returns (VisitResponse);
+  rpc Update (UpdateVisitRequest) returns (VisitResponse);
+  rpc Delete (VisitById) returns (DeleteVisitResponse);
+}
+
+message CreateVisitRequest {
+  int32 patientId = 1;
+  string visitDate = 2;
+}
+
+message UpdateVisitRequest {
+  int32 id = 1;
+  int32 patientId = 2;
+  string visit_date = 3;
+}
+
+message VisitById {
+  int32 id = 1;
+}
+
+message VisitResponse {
+  int32 id = 1;
+  int32 patientId = 2;
+  string visit_date = 3;
+  string createdAt = 4;
+}
+
+message VisitsListResponse {
+  repeated VisitResponse visits = 1;
+}
+
+message DeleteVisitResponse {
+  string message = 1;
+}
+
+
+
+service NoteService {
+  rpc Create (AddNoteRequest) returns (NoteResponse);
+  rpc GetAll (Empty) returns (NotesListResponse);
+  rpc GetOne (NoteById) returns (NoteResponse);
+  rpc Update (UpdateNoteRequest) returns (NoteResponse);
+  rpc Delete (NoteById) returns (DeleteResponse);
+}
+message NoteById {
+  int32 id = 1;
+}
+message UpdateNoteRequest {
+  int32 id = 1;             
+  string text = 2;    
+  string visit_id = 3;       
+}
+
+message AddNoteRequest {
+  int32 visit_id = 1;
+  string text = 2;
+}
+message NoteResponse {
+  int32 id = 1;
+  int32 visit_id = 2;
+  string text = 3;
+  string createdAt = 4;
+}
+message NotesByVisitRequest {
+  int32 visit_id = 1;
+}
+message NotesListResponse {
+  repeated NoteResponse notes = 1;
+}

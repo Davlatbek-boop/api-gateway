@@ -9,9 +9,11 @@ import {
   OnModuleInit,
   Inject,
   Patch,
+  Res,
+  Req,
 } from "@nestjs/common";
 import { ClientGrpc } from "@nestjs/microservices";
-import { Observable, lastValueFrom } from "rxjs";
+import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
 import { CreateDoctorDto } from "./dto/create-doctor.dto";
 import { UpdateDoctorDto } from "./dto/update-doctor.dto";
 import { DoctorService } from "./interfaces/doctor.interface";
@@ -21,8 +23,11 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from "@nestjs/swagger";
 import { LoginDoctorDto } from "./dto/login-doctor.dto";
+import { Request, Response } from "express";
+
 
 @ApiTags("Doctors")
 @Controller("doctors")
@@ -43,19 +48,33 @@ export class DoctorController implements OnModuleInit {
     return this.doctorService.Create(dto);
   }
 
-  @Post("signin")
+  @Post("sign-in")
   @ApiOperation({ summary: "Sign in doctor" })
   @ApiBody({ type: LoginDoctorDto })
   @ApiResponse({ status: 200, description: "Doctor signed in successfully" })
-  signIn(@Body() dto: LoginDoctorDto): Observable<any> {
-    return this.doctorService.SignIn(dto);
+  async signIn(
+    @Body() dto: LoginDoctorDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const response = await firstValueFrom(this.doctorService.SignIn(dto));
+
+    res.cookie("doctor-refresh-token", response.refreshToken, {
+      httpOnly: true,
+      maxAge: Number(process.env.REFRESH_COOKIE_TIME),
+    });
+
+    return {
+      accessToken: response.accessToken,
+      message: response.message,
+    };
   }
 
+  @ApiBearerAuth()
   @Post("signout")
   @ApiOperation({ summary: "Sign out doctor" })
   @ApiResponse({ status: 200, description: "Doctor signed out successfully" })
-  signOut(): Observable<any> {
-    return this.doctorService.SignOut({});
+  signOut(@Req() req: Request, @Res({ passthrough: true }) res: Response): Observable<any> {
+    return this.doctorService.SignOut(req, res);
   }
 
   @Get()

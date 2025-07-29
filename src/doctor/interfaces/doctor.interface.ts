@@ -1,4 +1,6 @@
-import { Observable } from 'rxjs';
+import { Observable } from "rxjs";
+import { LoginDoctorDto } from "../dto/login-doctor.dto";
+import { Request, Response } from "express";
 
 export interface DoctorService {
   Create(data: {
@@ -16,19 +18,13 @@ export interface DoctorService {
     isCreator: boolean;
   }>;
 
-  SignIn(data: {
-    email: string;
-    password: string;
-  }): Observable<{
-    id: number;
-    name: string;
-    email: string;
-    phoneNumber?: string;
-    isActive: boolean;
-    isCreator: boolean;
-  }>;
+ SignIn(data: LoginDoctorDto): Observable<{
+  accessToken: string;
+  refreshToken: string;
+  message: string;
+}>;
 
-  SignOut(data: {}): Observable<{
+  SignOut(req: Request, res: Response): Observable<{
     message: string;
   }>;
 

@@ -4,7 +4,7 @@ package doctor;
 
 service DoctorService {
   rpc Create (CreateDoctorRequest) returns (DoctorResponse);
-  rpc SignIn (LoginDoctorRequest) returns (DoctorResponse);
+  rpc SignIn (LoginDoctorRequest) returns (DoctorSignInReponse);
   rpc SignOut (Empty) returns (SignOutResponse);
   rpc FindAll (Empty) returns (DoctorList);
   rpc FindOne (FindOneRequest) returns (DoctorResponse);
@@ -13,6 +13,12 @@ service DoctorService {
 }
 
 message Empty {}
+
+message DoctorSignInReponse {
+  string accessToken = 1;
+  string refreshToken = 2;
+  string message = 3;
+}
 
 message DoctorResponse {
   int32 id = 1;
